@@ -4,11 +4,12 @@ using customerPhoneApi.models;
 
 namespace customerPhoneApi
 {
-  public class AutoMapperProfile : Profile
-  {
-    public AutoMapperProfile()
+    public class AutoMapperProfile : Profile
     {
-      CreateMap<User, GetUserDto>();
+        public AutoMapperProfile()
+        {
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
+        }
     }
-  }
 }
