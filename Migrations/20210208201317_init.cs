@@ -2,7 +2,7 @@
 
 namespace customerPhoneApi.Migrations
 {
-    public partial class addTokenToUser : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

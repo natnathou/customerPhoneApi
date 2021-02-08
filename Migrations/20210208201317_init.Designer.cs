@@ -10,8 +10,8 @@ using customerPhoneApi.Data;
 namespace customerPhoneApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210208103816_addTokenToUser")]
-    partial class addTokenToUser
+    [Migration("20210208201317_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
