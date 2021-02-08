@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using customerPhoneApi.Data;
@@ -9,9 +10,10 @@ using customerPhoneApi.Data;
 namespace customerPhoneApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210208103138_addRole")]
+    partial class addRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,9 +52,6 @@ namespace customerPhoneApi.Migrations
 
                     b.Property<byte[]>("Salt")
                         .HasColumnType("bytea");
-
-                    b.Property<string>("Token")
-                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .HasColumnType("text");

@@ -9,7 +9,7 @@ namespace customerPhoneApi.utility
 {
     public class ObjectValidation
     {
-        public void userIsValid(UserDto user)
+        public void userIsValid(PostUserDto user)
         {
             var errorMessagesList = new List<string> { };
 
@@ -23,7 +23,7 @@ namespace customerPhoneApi.utility
 
             if (!Regex.IsMatch(user.PhoneNumber, pattern))
             {
-                errorMessagesList.Add("Invalid Phone");
+                errorMessagesList.Add("Invalid Phone, must have 10 digits");
             }
             try
             {
@@ -35,10 +35,10 @@ namespace customerPhoneApi.utility
                 errorMessagesList.Add("Invalid Format Email");
 
             }
-            pattern = "^[a-zA-Z]{3,}$";
+            pattern = "^[a-zA-Z0-9]{3,}$";
             if (!Regex.IsMatch(user.Password, pattern))
             {
-                errorMessagesList.Add("Invalid format password");
+                errorMessagesList.Add("Invalid format password, minimun 4 length");
 
             }
             if (errorMessagesList.Count() != 0)

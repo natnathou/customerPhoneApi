@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using customerPhoneApi.Data;
+using customerPhoneApi.helpers;
 using customerPhoneApi.services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,12 +35,18 @@ namespace customerPhoneApi
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -50,10 +58,17 @@ namespace customerPhoneApi
 
             app.UseAuthorization();
 
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/user"), appBuilder =>
+                           {
+                               appBuilder.UseMiddleware<JwtMiddleware>();
+
+                           });
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+                        {
+                            endpoints.MapControllers();
+                        });
+
+
         }
     }
 }

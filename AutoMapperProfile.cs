@@ -8,8 +8,9 @@ namespace customerPhoneApi
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
+            CreateMap<PostUserDto, User>();
+            CreateMap<User, GetUserDto>();
+            CreateMap<PostUserDto, GetUserDto>();
         }
     }
 }

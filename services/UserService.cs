@@ -6,6 +6,7 @@ using customerPhoneApi.Data;
 using customerPhoneApi.Dtos;
 using customerPhoneApi.models;
 using customerPhoneApi.utility;
+using Microsoft.AspNetCore.Http;
 
 namespace customerPhoneApi.services
 {
@@ -15,22 +16,27 @@ namespace customerPhoneApi.services
 
         private readonly IMapper _mapper;
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IMapper mapper, DataContext context)
+        public UserService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _context = context;
             _mapper = mapper;
         }
 
-        public ResponseService<List<UserDto>> GetAllUsers()
+        public ResponseService<List<GetUserDto>> GetAllUsers()
         {
-            var response = new ResponseService<List<UserDto>>();
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split("bearer ").Last();
+            var currentUser = _context.Users.FirstOrDefault(u => u.Token == token);
+
+            var response = new ResponseService<List<GetUserDto>>();
 
             try
             {
 
 
-                response.Data = _context.Users.Select(u => _mapper.Map<UserDto>(u)).ToList();
+                response.Data = _context.Users.Select(u => _mapper.Map<GetUserDto>(u)).ToList();
                 response.Success = true;
                 response.Message = "Response was sent correctly to the client.";
 
@@ -47,17 +53,28 @@ namespace customerPhoneApi.services
             return response;
         }
 
-        public async Task<ResponseService<UserDto>> AddUser(UserDto user)
+        public async Task<ResponseService<GetUserDto>> AddUser(PostUserDto user)
         {
 
-            var response = new ResponseService<UserDto>();
+            var response = new ResponseService<GetUserDto>();
             try
             {
                 new ObjectValidation().userIsValid(user);
+
                 User userTrueFormat = _mapper.Map<User>(user);
+                User userExist = _context.Users.FirstOrDefault(u => u.Username == user.Username || u.Email == user.Email);
+
+                if (userExist != null)
+                    throw new System.Exception("User Already exist");
+
+                CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                userTrueFormat.PasswordHash = passwordHash;
+                userTrueFormat.Salt = passwordSalt;
+
                 await _context.Users.AddAsync(userTrueFormat);
                 await _context.SaveChangesAsync();
-                response.Data = user;
+
+                response.Data = _mapper.Map<GetUserDto>(user);
                 response.Success = true;
                 response.Message = "User creation successfull!";
             }
@@ -71,15 +88,15 @@ namespace customerPhoneApi.services
 
         }
 
-        public async Task<ResponseService<List<UserDto>>> RemoveAllUsers()
+        public async Task<ResponseService<List<GetUserDto>>> RemoveAllUsers()
         {
-            var response = new ResponseService<List<UserDto>>();
+            var response = new ResponseService<List<GetUserDto>>();
 
             try
             {
                 _context.RemoveRange(_context.Users);
                 await _context.SaveChangesAsync();
-                response.Data = _context.Users.Select((u) => _mapper.Map<UserDto>(u)).ToList();
+                response.Data = _context.Users.Select((u) => _mapper.Map<GetUserDto>(u)).ToList();
                 response.Success = true;
                 response.Message = "Table was deleted!";
 
@@ -93,5 +110,16 @@ namespace customerPhoneApi.services
 
             return response;
         }
+
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
     }
 }

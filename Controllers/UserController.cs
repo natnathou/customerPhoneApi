@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace customerPhoneApi.Controllers
 {
+
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -31,7 +32,7 @@ namespace customerPhoneApi.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<IActionResult> Post(UserDto user)
+        public async Task<IActionResult> Post(PostUserDto user)
         {
             try
             {

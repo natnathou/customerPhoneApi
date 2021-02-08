@@ -7,8 +7,8 @@ namespace customerPhoneApi.services
 {
     public interface IUserService
     {
-        ResponseService<List<UserDto>> GetAllUsers();
-        Task<ResponseService<UserDto>> AddUser(UserDto user);
-        Task<ResponseService<List<UserDto>>> RemoveAllUsers();
+        ResponseService<List<GetUserDto>> GetAllUsers();
+        Task<ResponseService<GetUserDto>> AddUser(PostUserDto user);
+        Task<ResponseService<List<GetUserDto>>> RemoveAllUsers();
     }
 }

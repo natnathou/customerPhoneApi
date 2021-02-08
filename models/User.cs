@@ -16,6 +16,10 @@ namespace customerPhoneApi.models
         public DateTime DateCreation { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string Token { get; set; }
+
+        [Required]
+        public string Role { get; set; } = "Regular";
     }
 
 }

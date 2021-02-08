@@ -1,6 +1,6 @@
 namespace customerPhoneApi.Dtos
 {
-    public class UserDto
+    public class PostUserDto
     {
         public string Username { get; set; }
         public string Name { get; set; }
