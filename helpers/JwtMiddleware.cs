@@ -2,11 +2,14 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using customerPhoneApi.Data;
+using customerPhoneApi.models;
 using customerPhoneApi.services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -51,9 +54,6 @@ namespace customerPhoneApi.helpers
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 return;
             }
-
-
-
         }
 
         private void attachUserToContext(HttpContext context, string token, DataContext dataContext)
@@ -70,7 +70,10 @@ namespace customerPhoneApi.helpers
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
             var jwtToken = (JwtSecurityToken)validatedToken;
-
+            User currentUser = dataContext.Users.FirstOrDefault(u => u.Token == token);
+            var identity = new ClaimsIdentity(jwtToken.Claims);
         }
+
+
     }
 }
